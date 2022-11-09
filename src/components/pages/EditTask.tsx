@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import TaskForm from '../reusable/form/TaskForm'
 import {useHistory, useParams} from "react-router-dom";
 import {useAppDispatch} from "../../hooks/useStore";
@@ -37,10 +37,13 @@ const EditTask = () => {
         }
     }, [])
 
-    const submitHandler = async (task: ITask) => {
-        onSubmitEdit(task)
+    const submitHandler = useCallback(async (task: ITask) => {
+        const updated = {...task, updated_at: Date.now()}
+        onSubmitEdit(updated)
         history.push('/')
-    }
+    }, [onSubmitEdit, history])
+
+    const handleClick = useCallback(() => history.push('/'), [history])
 
     return (
         <div className="container mx-auto flex justify-center flex-col items-center">
@@ -54,8 +57,9 @@ const EditTask = () => {
                         <div className="my-5">
                             <Button
                                 text="Назад"
-                                onClick={() => history.push('/')}
-                                IconComponent={<ArrowLeftCircleIcon className="h-5 w-5 mr-1" />} />
+                                onClick={handleClick}
+                                Icon={ArrowLeftCircleIcon}
+                                iconClasses='h-5 w-5 mr-1'/>
                             <TaskForm
                                 data={data}
                                 schemaWithDate={schemaWithDate}

@@ -1,4 +1,4 @@
-import React, {ChangeEvent, FC} from 'react';
+import React, {ChangeEvent, FC, useCallback} from 'react';
 
 interface ITextInput {
     name: string,
@@ -23,9 +23,9 @@ const TextInput:FC<ITextInput> = ({
     ...props
     }) => {
 
-    const handleChange = (e:ChangeEvent<HTMLInputElement>) => {
+    const handleChange = useCallback((e:ChangeEvent<HTMLInputElement>) => {
         onChange({ name: e.target.name, value: e.target.value });
-    };
+    }, [onChange])
 
     return (
         <div className="mb-1">

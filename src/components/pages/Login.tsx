@@ -10,7 +10,7 @@ import {login} from '../../store/user/userActions'
 import {useEffect, useRef} from "react";
 import {userRemoveError} from "../../store/user/userSlice";
 
-type LocationState = { from: string; };
+type LocationState = { from: { pathname: string }; };
 
 const Login = () => {
 
@@ -18,10 +18,13 @@ const Login = () => {
     const history = useHistory()
     const fromRef = useRef<string>()
 
-    if (history.location.state) {
-        const {from} = history.location.state as LocationState;
-        fromRef.current = from
-    }
+    useEffect(() => {
+        if (history.location.state) {
+            const {from} = history.location.state as LocationState;
+            fromRef.current = from.pathname
+        }
+    }, [])
+
 
     const { error: userError } = useAppSelector(state => state.user)
 
@@ -39,7 +42,7 @@ const Login = () => {
 
     const submitHandler = (values) => {
         dispatch(login(values))
-        history.push('/')
+        history.push(fromRef.current ? fromRef.current : '/')
     }
 
     return (
@@ -84,4 +87,4 @@ const Login = () => {
         )
 }
  
-export default Login
+export default React.memo(Login)

@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useCallback} from 'react';
 import TextInput from "../reusable/form/TextInput";
 import RemoveButton from "../reusable/RemoveButton";
 
@@ -9,18 +9,20 @@ interface SearchProps {
 
 const Search:FC<SearchProps> = ({ value, onSearch }) => {
 
-    const removeSearchHandler = () => {
-        if (value) {
-            onSearch('')
-        }
-    }
+    const removeSearchHandler = useCallback(() => {
+        onSearch('')
+    }, [onSearch])
+
+    const searchHandler = useCallback((newValue) => {
+        onSearch(newValue)
+    }, [onSearch])
 
     return (
         <div className="relative w-[60%] mr-3">
             <TextInput
                 name='search'
                 value={value}
-                onChange={({ value: newValue }) => onSearch(newValue)}
+                onChange={({ value: newValue }) => searchHandler(newValue)}
                 placeholder='Введите задачу'
             />
             {value && (
@@ -31,4 +33,4 @@ const Search:FC<SearchProps> = ({ value, onSearch }) => {
     );
 };
 
-export default Search;
+export default React.memo(Search);

@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useCallback} from 'react';
 
 interface RemoveButtonProps {
     id?: string,
@@ -8,9 +8,9 @@ interface RemoveButtonProps {
 
 const RemoveButton:FC<RemoveButtonProps> = ({ id, onClick, classes }) => {
 
-    const clickHandler = (event:React.MouseEvent<HTMLButtonElement>) => {
+    const clickHandler = useCallback((event:React.MouseEvent<HTMLButtonElement>) => {
         onClick(event, id)
-    }
+    }, [])
 
     return (
         <button
@@ -21,4 +21,4 @@ const RemoveButton:FC<RemoveButtonProps> = ({ id, onClick, classes }) => {
     );
 };
 
-export default RemoveButton;
+export default React.memo(RemoveButton);

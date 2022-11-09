@@ -123,4 +123,4 @@ const Form:FC<FormProps> = ({ children, data, schemaWithDate, schemaWithOutDate,
     );
 };
 
-export default Form;
+export default React.memo(Form);

@@ -16,4 +16,4 @@ const StatusList:FC<StatusListProps> = ({ items }) => {
     );
 };
 
-export default StatusList;
+export default React.memo(StatusList);

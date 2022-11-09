@@ -10,7 +10,8 @@ export const initialCurrent: ITask = {
     body: '',
     status: 'pending',
     deadline: Date.now() + 1000*60*60*24,
-    created_at: 0
+    created_at: 0,
+    updated_at: 0
 }
 
 interface initialState {
@@ -156,6 +157,7 @@ const statusSlice = createSlice({
         tasksRecievedWithStatusFilter(state, action: PayloadAction<{ data: ITask[], status: statusType }>) {
             state.tasksContainer = action.payload.data
             state.error = null
+            state.filter = action.payload.status
             if (action.payload.status === 'outdated') {
                 state.tasks = state.outdated
             } else {

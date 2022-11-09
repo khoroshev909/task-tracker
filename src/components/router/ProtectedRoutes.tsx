@@ -30,4 +30,4 @@ const ProtectedRoutes:FC<IProps> = ({component: Component, path, children}) => {
     );
 };
 
-export default ProtectedRoutes;
+export default React.memo(ProtectedRoutes);

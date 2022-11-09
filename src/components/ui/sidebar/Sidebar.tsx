@@ -1,4 +1,4 @@
-import React, {FC, useContext} from 'react';
+import React, {FC, useCallback, useContext, useMemo} from 'react';
 import {useAppDispatch, useAppSelector} from "../../../hooks/useStore";
 import {ListBulletIcon, PencilSquareIcon} from "@heroicons/react/20/solid";
 import {useHistory} from "react-router-dom";
@@ -15,30 +15,40 @@ const Sidebar:FC = () => {
     const { data: items } = useAppSelector(state => state.status)
     const { setFirstPage } = useContext(TaskListContext)
 
-    const dropfFilterHandler = () => {
+    const dropfFilterHandler = useCallback(() => {
         if (filter === null) return
         setFirstPage()
         dispatch(tasksDropFilter())
         history.push('/')
-    }
+    }, [filter, dispatch, tasksDropFilter, history])
+
+    const handleClick = useCallback(() => history.push('/tasks/add'), [history])
+
+    const allTasksActive = useMemo(() => filter === null ? 'bg-gray-700' : 'bg-gray-500', [filter])
+
+    const allTasksIcon = useMemo(() => React.memo(ListBulletIcon), [])
 
     return (
        <>
            <div className="flex flex-col">
-               <StatusList items={items} />
                <Button
                    text="Все задачи"
                    onClick={dropfFilterHandler}
-                   classes="flex items-center p-2 rounded-lg text-white text-sm font-medium bg-gray-500 shadow-md hover:cursor-pointer hover:bg-gray-400"
-                   IconComponent={<ListBulletIcon className="h-4 w-4 mr-1" />} />
+                   classes={`${allTasksActive} mb-3 flex items-center p-2 rounded-lg text-white text-sm font-medium bg-gray-500 shadow-md hover:cursor-pointer hover:bg-gray-400`}
+                   Icon={allTasksIcon}
+                   iconClasses="h-4 w-4 mr-1" />
+
+               <StatusList items={items} />
+
                <Button
                    text="Добавить задачу"
-                   onClick={() => history.push('/tasks/add')}
-                   classes="flex items-center mt-5 p-2 rounded-lg text-white text-sm font-medium bg-[#7192BE] shadow-md hover:cursor-pointer hover:bg-[#255DA5]"
-                   IconComponent={<PencilSquareIcon className="h-4 w-4 mr-1" />} />
+                   onClick={handleClick}
+                   classes="mt-3 flex items-center p-2 rounded-lg text-white text-sm font-medium bg-[#7192BE] shadow-md hover:cursor-pointer hover:bg-[#255DA5]"
+                   Icon={PencilSquareIcon}
+                   iconClasses="h-4 w-4 mr-1"/>
            </div>
        </>
     );
 };
 
-export default Sidebar;
+export default React.memo(Sidebar);

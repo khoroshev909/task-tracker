@@ -59,4 +59,4 @@ const TaskForm:FC<TaskFormProps> = ({ data, schemaWithDate, schemaWithOutDate, s
     )
 }
  
-export default TaskForm;
+export default React.memo(TaskForm);

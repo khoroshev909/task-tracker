@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useEffect, useRef, useState} from 'react'
+import React, {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react'
 import {useHistory, useLocation} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../hooks/useStore";
 import {ArrowRightIcon, ArrowLeftIcon} from "@heroicons/react/20/solid";
@@ -10,7 +10,7 @@ import {IQueryParams} from "../../types/other";
 import {taskHideFinished, taskShowFinished, tasksRemoveFilter} from "../../store/task/taskSlice";
 import {localStorageService} from "../../services/localstorage.service";
 import CheckboxHideFinished from "../ui/CheckboxHideFinished";
-import {NavigationContext} from "../ui/navbar/Navbar";
+import {NavigationContext, setInitialPage} from "../ui/navbar/Navbar";
 import {searchTasks} from "../../store/task/taskActions";
 import query from 'query-string'
 import qetParamsString from '../../utiils/getParamsString'
@@ -34,22 +34,27 @@ const TasksPage = () => {
                     0 :
                     Number(page) - 1
         )
-    const { setFirstPage } = useContext(NavigationContext)
+    const { setInitialPage } = useContext(NavigationContext)
     const [isHideFinished, setIsHideFinished] = useState<boolean>(
         localStorageService.getIsHideFinished() !== undefined ?
             localStorageService.getIsHideFinished() :
             false
     )
     const [search, setSearch] = useState<string>('')
-    const isShowTasks = tasks.length && tasksChunk.length && tasksChunk.length - 1 >= pageIdx
-    const isShowPaginate = tasks && tasks.length > perPageRef.current
+
+    const isShowTasks = useMemo(() => {
+        return tasks.length && tasksChunk.length && tasksChunk.length - 1 >= pageIdx
+    }, [tasks, tasksChunk, pageIdx])
+
+    const isShowPaginate = useMemo(() => {
+        return tasks && tasks.length > perPageRef.current
+    }, [tasks, perPageRef])
 
     useEffect(() => {
         if (tasksChunk.length && pageIdx + 1 > tasksChunk.length) {
             setPageIdx(tasksChunk.length - 1)
         }
     }, [tasksChunk])
-
 
     useEffect(() => {
         if (tasks.length) {
@@ -65,18 +70,15 @@ const TasksPage = () => {
     }, [filter])
 
     useEffect(() => {
-        if (setFirstPage.value) {
+        if (setInitialPage.value) {
             setPageIdx(0)
             setSearch('')
-            setFirstPage.value = false
+            setInitialPage.value = false
         }
-    }, [setFirstPage.value])
+    }, [setInitialPage.value])
 
-    useEffect(() => {
-        if (search) startSearching()
-    }, [search])
 
-    function startSearching() {
+    const resetFilters = useCallback(() => {
         if (isHideFinished) {
             setIsHideFinished(false)
             localStorageService.setIsHideFinishedTasks(false)
@@ -88,7 +90,12 @@ const TasksPage = () => {
             history.push('/')
             setPageIdx(0)
         }
-    }
+    }, [isHideFinished, setIsHideFinished, localStorageService, filter, dispatch, tasksRemoveFilter, pageIdx, history, setPageIdx])
+
+    useEffect(() => {
+        if (search) resetFilters()
+    }, [search])
+
 
     const changePageHandler = (selectedItem: { selected: number; }) => {
         setPageIdx(selectedItem.selected)
@@ -96,7 +103,7 @@ const TasksPage = () => {
         history.push(`/` + qetParamsString(params))
     }
 
-    const toggleHideFinishedHandler = () => {
+    const toggleHideFinishedHandler = useCallback(() => {
         setPageIdx(0)
         if (isHideFinished === false) {
             dispatch(taskHideFinished())
@@ -105,18 +112,21 @@ const TasksPage = () => {
         }
         localStorageService.setIsHideFinishedTasks(!isHideFinished)
         setIsHideFinished(prev => !prev)
-    }
+    }, [setPageIdx, isHideFinished, dispatch, taskHideFinished, taskShowFinished, localStorageService, setIsHideFinished])
 
-    const searchHandler = (value: string) => {
+
+    const searchHandler = useCallback((value: string) => {
         setSearch(value)
         dispatch(searchTasks(value))
-    }
+    }, [setSearch, dispatch, searchTasks])
+
+    const setFirstPage = useCallback(() => setPageIdx(0), [setPageIdx])
 
     return (
         <>
             <div className="flex p-4">
                <div className="mr-3  w-[20%]">
-                   <TaskListContext.Provider value={{ setFirstPage:() => setPageIdx(0) }} >
+                   <TaskListContext.Provider value={{ setFirstPage }} >
                        <Sidebar />
                    </TaskListContext.Provider>
                </div>
@@ -162,4 +172,4 @@ const TasksPage = () => {
     );
 }
  
-export default TasksPage;
+export default React.memo(TasksPage);

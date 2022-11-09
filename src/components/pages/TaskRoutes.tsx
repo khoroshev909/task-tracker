@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo} from 'react';
-import {Route, Switch, useLocation, useParams} from "react-router-dom";
+import {Redirect, Route, Switch, useLocation, useParams} from "react-router-dom";
 import {toast} from "react-toastify";
 import AddTask from './AddTask';
 import {useAppDispatch, useAppSelector} from "../../hooks/useStore";
@@ -7,12 +7,13 @@ import {fetchTasks} from "../../store/task/taskActions";
 import Loading from "../reusable/Loading";
 import {fetchStatusData} from "../../store/status/statusActions";
 import {NavigationContext} from "../ui/navbar/Navbar";
-import {setFirstPage} from "../ui/navbar/Navbar";
+import {setInitialPage} from "../ui/navbar/Navbar";
 import {IQueryParams} from "../../types/other";
 import query from "query-string";
 import checkStatusType from "../../utiils/checkStatusType";
 import TasksPage from "./TasksPage";
 import EditTask from "./EditTask";
+import NotFound from "./NotFound";
 
 const TaskRoutes = () => {
     
@@ -52,11 +53,13 @@ const TaskRoutes = () => {
             {globalLoading ? (
                 <Loading/>
             ) : (
-                <NavigationContext.Provider value={{setFirstPage}} >
+                <NavigationContext.Provider value={{setInitialPage}} >
                 <Switch>
                     <Route path="/tasks/add" component={AddTask} />
                     <Route path="/tasks/edit/:taskId" component={EditTask} />
-                    <Route path="/" component={TasksPage} exact />
+                    <Route exact path="/" component={TasksPage}  />
+                    <Route path="/404" component={NotFound} />
+                    <Redirect to="/404" />
                 </Switch>
                 </NavigationContext.Provider>
             )}
@@ -64,4 +67,4 @@ const TaskRoutes = () => {
     );
 };
 
-export default TaskRoutes;
+export default React.memo(TaskRoutes);

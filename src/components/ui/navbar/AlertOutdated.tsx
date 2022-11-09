@@ -19,4 +19,4 @@ const AlertOutdated:FC<AlertOutdatedProps> = ({ outdatedLength, fetchOutdated, o
     );
 };
 
-export default AlertOutdated;
+export default React.memo(AlertOutdated);

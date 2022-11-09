@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useCallback, useMemo} from 'react';
 import DateBadge from '../reusable/DateItem';
 import {useAppDispatch, useAppSelector} from "../../hooks/useStore";
 import {fetchStatusById} from "../../store/status/statusActions";
@@ -19,19 +19,23 @@ const TaskCard:FC<TaskCardProps> = ({ task, searchText }) => {
     const history = useHistory()
     const dispatch = useAppDispatch()
     const status = useAppSelector(fetchStatusById(task.status))
-    const isOutdated = (Date.now() > task.deadline && status.id !== 'finished')
-    const isFinished = status?.id === 'finished'
 
-    const removeHandler = (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
+    const isOutdated =  useMemo(() => {
+        return Date.now() > task.deadline && status.id !== 'finished'
+    }, [task, status])
+
+    const isFinished = useMemo(() => status?.id === 'finished', [status])
+
+    const removeHandler = useCallback((event: React.MouseEvent<HTMLButtonElement>, id: string) => {
         event.preventDefault()
         const isRemove = window.confirm('Удалить задачу?')
         if (isRemove) {
             dispatch(removeTask(id))
-            history.push('/tasks')
+            history.push('/')
         }
-    }
+    }, [dispatch, removeTask, history])
 
-    const background = isOutdated ? 'bg-red-200' : 'bg-[#E4E2E0]'
+    const background = useMemo(() => isOutdated ? 'bg-red-200' : 'bg-[#E4E2E0]', [isOutdated])
 
     return (
         <Link to={`/tasks/edit/${task.id}`} className={`${background} relative flex justify-between border py-3 px-5 rounded-lg mb-2 hover:shadow-md hover:bg-gray-100 hover:cursor-pointer transition-all`}>
@@ -76,4 +80,4 @@ const TaskCard:FC<TaskCardProps> = ({ task, searchText }) => {
     );
 }
  
-export default TaskCard;
+export default React.memo(TaskCard);

@@ -32,7 +32,6 @@ const SelectInput:FC<ISelectInput<SelectOption>> = ({name, type = 'select', valu
                 id={id}
                 name={name}
                 defaultValue={value}
-                // value={value}
                 onChange={changeHandler}
                 className="block w-full outline-0 bg-gray-50 border border-gray-500 text-gray-700 font-semibold text-sm p-2 rounded-lg focus:ring-[#255DA5] focus:border-[#255DA5]">
                 {options.map((item ) => (

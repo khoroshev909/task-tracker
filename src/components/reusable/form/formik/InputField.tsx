@@ -31,4 +31,4 @@ const InputField:FC<InputProps> = ({ name, value, id, type, placeholder, label, 
     )
 }
  
-export default InputField
+export default React.memo(InputField)

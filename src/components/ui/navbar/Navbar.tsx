@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useState, useCallback} from 'react';
 import {Link, useHistory} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../../hooks/useStore";
 import {userLogout} from "../../../store/user/userSlice";
@@ -8,7 +8,7 @@ import Button from "../../reusable/Button";
 import AlertOutdated from "./AlertOutdated";
 import Notification from "./Notification";
 
-export const setFirstPage = { value: false }
+export const setInitialPage = { value: false }
 export const NavigationContext = React.createContext<any>({})
 
 const Navbar:FC = () => {
@@ -19,34 +19,34 @@ const Navbar:FC = () => {
     const { outdated, loading: tasksLoading } = useAppSelector(state => state.tasks)
     const [isShowAlert, setIsShowAlert] = useState<boolean>(false)
 
-    const logoutHandler = () =>  {
+    const logoutHandler =  useCallback(  () =>  {
         const confirm = window.confirm('Выйти из аккаутна?')
         if (confirm) {
             localStorageService.removeTokens()
             dispatch(userLogout())
         }
-    }
+    }, [localStorageService, dispatch, userLogout])
 
-    const toggleShowAlertHandler = () => {
+    const toggleShowAlertHandler = useCallback(() => {
         setIsShowAlert(prev => !prev)
-    }
+    }, [setIsShowAlert])
 
-    const fetchOutdatedHandler = () => {
-        setFirstPage.value = true
+    const fetchOutdatedHandler =  useCallback(() => {
+        setInitialPage.value = true
         dispatch(fetchOutdatedTasks(outdated))
         setIsShowAlert(false)
         history.push('/?status=outdated')
-    }
+    }, [setInitialPage.value, dispatch, fetchOutdatedTasks, setIsShowAlert, history, outdated])
 
-    const hideAlertHandler = () => {
+    const hideAlertHandler = useCallback(() => {
         setIsShowAlert(false)
-    }
+    }, [setIsShowAlert])
 
-    const homePageHandler = () => {
-        setFirstPage.value = true
-        history.push('/')
+    const homePageHandler = useCallback(() => {
+        setInitialPage.value = true
         dispatch(tasksDropFilter())
-    }
+        history.push('/')
+    }, [setInitialPage.value, dispatch, tasksDropFilter, history])
 
     return (
             <nav className="flex justify-between items-center px-5 bg-gray-500 text-white h-[50px]">
@@ -69,7 +69,10 @@ const Navbar:FC = () => {
                                     )}
                                     {current.userName}
                                 </span>
-                                <Button text="Выход" onClick={logoutHandler} />
+                                <Button
+                                    text="Выход"
+                                    onClick={logoutHandler}
+                                    classes="bg-[#7192BE]" />
                             </span>
                         </>
                     ) : (
@@ -83,4 +86,4 @@ const Navbar:FC = () => {
         )
     }  ;
 
-export default Navbar;
+export default React.memo(Navbar);

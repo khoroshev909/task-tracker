@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import { nanoid } from 'nanoid'
 import "react-datepicker/dist/react-datepicker.css";
 import {useHistory} from "react-router-dom";
@@ -27,19 +27,23 @@ const AddTask = () => {
             ...newTask,
             id: nanoid(),
             userId: currentUser.id,
-            created_at: Date.now()
+            created_at: Date.now(),
+            updated_at: Date.now()
         }
         onSubmitCreate(task)
         history.push('/')
     }
+
+    const handleClick = useCallback(() => history.push('/'), [history])
 
     return (
             <div className="container mx-auto flex justify-center flex-col items-center">
                 <div className="my-5 ">
                     <Button
                         text="Назад"
-                        onClick={() => history.push('/')}
-                        IconComponent={<ArrowLeftCircleIcon className="h-5 w-5 mr-1" />} />
+                        onClick={handleClick}
+                        Icon={ArrowLeftCircleIcon}
+                        iconClasses="h-5 w-5 mr-1"/>
                     <TaskForm
                         data={data}
                         schemaWithDate={schemaWithDate}
@@ -52,4 +56,4 @@ const AddTask = () => {
         )
 };
 
-export default AddTask;
+export default React.memo(AddTask);

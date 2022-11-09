@@ -7,5 +7,6 @@ export interface ITask {
     title: string,
     body: string,
     deadline: number,
-    created_at: number
+    created_at: number,
+    updated_at: number
 }

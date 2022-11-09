@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useMemo} from 'react';
 import CheckboxInput from "../reusable/form/CheckboxInput";
 import {useAppSelector} from "../../hooks/useStore";
 
@@ -14,9 +14,9 @@ const CheckboxHideFinished:FC<CheckboxInputProps> = ({ id, checked, search, labe
 
     const { filter } = useAppSelector(state => state.tasks)
 
-    const isDisabled = search !== ''
+    const isDisabled = useMemo(() => search !== ''
         ? true
-        : filter !== null
+        : filter !== null, [search, filter])
 
     return (
         <CheckboxInput
@@ -28,4 +28,4 @@ const CheckboxHideFinished:FC<CheckboxInputProps> = ({ id, checked, search, labe
     );
 };
 
-export default CheckboxHideFinished;
+export default React.memo(CheckboxHideFinished);

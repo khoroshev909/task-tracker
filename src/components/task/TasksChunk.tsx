@@ -21,4 +21,4 @@ const TasksChunk:FC<TasksChunkProps> = ({ chunk, idx, serchText }) => {
     );
 };
 
-export default TasksChunk;
+export default React.memo(TasksChunk);

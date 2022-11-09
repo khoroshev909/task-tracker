@@ -1,7 +1,7 @@
-import React, {FC, useContext} from 'react';
+import React, {FC, useCallback, useContext, useMemo} from 'react';
 import {useAppDispatch, useAppSelector} from "../../hooks/useStore";
 import {fetchStatusById} from "../../store/status/statusActions";
-import {getStatusIcon} from "../../utiils/getStatusIcon";
+import StatusIcon from "../reusable/StatusIcon";
 import Loading from "../reusable/Loading";
 import {tasksFilterByStatus} from '../../store/task/taskSlice'
 import { useHistory } from 'react-router-dom';
@@ -19,22 +19,24 @@ const StatusItem:FC<StatusItemProps> = ({ id }) => {
     const dispatch = useAppDispatch()
     const history = useHistory()
     const status = useAppSelector(fetchStatusById(id))
-    const icon = getStatusIcon(status?.title)
     const { setFirstPage } = useContext(TaskListContext)
 
-    const filterHandler = (statusId: statusType) => {
+    const location = useMemo(() => getParamsString({status: status.id}), [status])
+
+    const filterHandler = useCallback((statusId: statusType) => {
+        if (filter === statusId) return
         setFirstPage()
         dispatch(tasksFilterByStatus(statusId))
-        history.push('/' + getParamsString({status: statusId}))
-    }
+        history.push('/' +  location)
+    }, [filter, dispatch, tasksFilterByStatus, location])
 
     return (
         status ? (
             <div
                 className={`${filter === status.id ? 'bg-gray-700 ' : 'bg-gray-500 '}flex items-center p-2 mb-3 text-center rounded-lg text-white text-sm font-medium shadow-md hover:cursor-pointer hover:bg-gray-400`}
-                onClick={() => filterHandler(id)}>
-                {icon}
-                {status?.title}
+                onClick={() => filterHandler(status.id)}>
+                <StatusIcon status={status.id}/>
+                {status.title}
             </div>
         ) : (
             <Loading />
@@ -42,4 +44,4 @@ const StatusItem:FC<StatusItemProps> = ({ id }) => {
     );
 };
 
-export default StatusItem;
+export default React.memo(StatusItem);

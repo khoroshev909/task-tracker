@@ -16,4 +16,4 @@ const FormButton:FC<FormButtonProps> = ({ isValid, text, type = 'button' }) => {
     );
 };
 
-export default FormButton;
+export default React.memo(FormButton);

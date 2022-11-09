@@ -109,4 +109,4 @@ const Registration:FC = () => {
         )
     }
 
-export default Registration
+export default React.memo(Registration)

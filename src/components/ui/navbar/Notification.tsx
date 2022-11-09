@@ -19,4 +19,4 @@ const Notification:FC<NotificationProps> = ({ toggleAlert, outdatedLength }) => 
     );
 };
 
-export default Notification;
+export default React.memo(Notification);
