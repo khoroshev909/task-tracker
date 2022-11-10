@@ -60,6 +60,7 @@ const statusSlice = createSlice({
         },
         tasksFailed(state, action: PayloadAction<string>) {
             state.error = action.payload
+            state.loading = false
         },
         tasksSearch(state, action: PayloadAction<ITask[]>) {
             state.tasks = action.payload
@@ -85,6 +86,7 @@ const statusSlice = createSlice({
         taskById(state, action: PayloadAction<ITask>) {
             state.current = action.payload
             state.loading = false
+            state.error = null
         },
         taskDropCurrent(state) {
             state.current = initialCurrent

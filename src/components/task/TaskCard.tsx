@@ -64,7 +64,7 @@ const TaskCard:FC<TaskCardProps> = ({ task, searchText }) => {
 
             <div className="task-deadline flex flex-col justify-center content-center mr-7">
                 <p className="text-xs font-bold mb-1">
-                    {isOutdated && task.status !== 'finished' ? 'Просрочена' : 'Срок исполнения:'}
+                    Срок исполнения
                 </p>
                 <div>
                     <DateBadge isOutdated={isOutdated} date={task.deadline} status={task.status} />

@@ -8,7 +8,7 @@ import Loading from "../reusable/Loading";
 const AppLoader = ({children}) => {
 
     const dispatch = useAppDispatch()
-    const {loading: userLoading, logged} = useAppSelector(state => state.user)
+    const {loading: userLoading} = useAppSelector(state => state.user)
 
     useEffect(() => {
         const userId = localStorageService.getUserId()
