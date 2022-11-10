@@ -1,6 +1,6 @@
-import { format } from 'date-fns'
-import { ru } from 'date-fns/esm/locale'
+import moment from 'moment';
+import 'moment/locale/ru'
 
 export function getDate(unix: number) {
-    return format(new Date(unix), 'dd MMMM kk:mm',  { locale: ru })
+    return moment(unix).locale('ru').format('DD MMM kk:mm')
 }

@@ -58,7 +58,7 @@ const TasksPage = () => {
 
     useEffect(() => {
         if (tasks.length) {
-            setTasksChunk(_.chunk( _.orderBy(tasks, ['created_at'], ['desc']) , perPageRef.current))
+            setTasksChunk(_.chunk( _.orderBy(tasks, ['updated_at'], ['desc']) , perPageRef.current))
         }
     }, [tasks])
 
